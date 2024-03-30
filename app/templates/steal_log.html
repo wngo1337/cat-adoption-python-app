@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block content %}
+<h1 class="title">{% block title %} Steal Logs {% endblock %}</h1>
+
+<div class="content">
+  <ul>
+    {% for entry, formatted_date in stolen_cat_info %}
+    <li>
+      <span class="alert">{{ user_ids_to_usernames[entry.user_id] }}</span>
+      stole
+      <span class="highlight">{{ cat_ids_to_names[entry.cat_id] }}</span> from
+      <span class="alert">{{ user_ids_to_usernames[entry.previous_owner_id] }}</span>
+      on {{ formatted_date }}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

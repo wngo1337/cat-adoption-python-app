@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block content %}
+<h1 class="title">
+  {% block title %} About The Cat Adoption Agency {% endblock %}
+</h1>
+
+<div class="content">
+  <p>
+    Hey all, I hope you're having fun with this app. As a bit of background, it
+    was very heavily inspired by the mobile game Neko Atsume created by
+    Hit-Point. In fact, I loved Neko Atsume so much that I used the characters
+    directly as motivation. Miss Fortune is my favourite cat, by the way. You
+    can have a look at
+    <a href="https://www.nekoatsume.com/en/" target="_blank">their website</a>, and I'd also
+    recommend giving it a try if you want a zero effort, comfy mobile game.
+  </p>
+  <p>
+    My second source of inspiration was Neopets. Not everyone can have a real
+    pet, but anyone can have Saint Purrtrick if no one steals him from you. All
+    these cats have traits and personalities that define them, and until quite
+    recently, it would have been very difficult to create the perfect stories
+    and backgrounds that accurately reflect them. However, with the help of
+    Python and Gemini, not only was the process relatively quick and painless,
+    but the results are probably better than what I could write myself! So I'm
+    quite happy and am looking forward to other ways that I can apply generative
+    AI.
+  </p>
+  <p>
+    If you want to see my other projects, you can check out
+    <a href="https://github.com/wngo1337" target="_blank">my Github</a> or
+    <a href="https://williamngo.ca" target="_blank">my website</a>!
+  </p>
+  <p>Until next time, happy cat adopting.</p>
+
+  <div class="centred-content">
+    <img
+      src="{{ url_for('static', filename = 'Images/tubbs_full.png') }}"
+      alt="Big Tubbs"
+    />
+  </div>
+</div>
+{% endblock %}

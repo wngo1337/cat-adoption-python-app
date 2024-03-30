@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% block content %}
+<h1 class="title">Activity Leaderboard</h1>
+<div class="content">
+  <div>
+    <table class="leaderboard">
+      <caption>
+        Top Cat Thieves
+      </caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Steals</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for leader in steal_leaders %}
+        <tr>
+          <td>{{ user_ids_to_names[leader.user_id] }}</td>
+          <td>{{ leader.num_steals }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!--I have no clue how to get these tables under each other-->
+
+  <div>
+    <table class="leaderboard">
+      <caption>
+        Top Cat Adopters
+      </caption>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Adoptions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for leader in adoption_leaders %}
+        <tr>
+          <td>{{ user_ids_to_names[leader.user_id] }}</td>
+          <td>{{ leader.num_adoptions }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

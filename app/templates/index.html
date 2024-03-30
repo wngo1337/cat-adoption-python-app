@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="title">{% block title %} Cats {% endblock %}</h1>
+<div class="content">
+    {% if not current_user.is_authenticated %}
+        <p>Note: only logged in users can adopt cats!</p>
+    {% else %}
+        <p>Welcome, <span class="highlight">{{ current_user.username }}</span>! Would you like to make an adoption today?</p>
+    {% endif %}
+    {% for cat, owner, method in cat_info %}
+    <div class="cat">
+        <!-- I wish I didn't have to hardcode the static path -->
+        <!-- Also if we don't do the weirdness with the quotes, can't retrieve image_path value -->
+        <img src="{{ url_for('static', filename = ''+cat.image_path) }}" alt="Image of cat">
+        <p><b>ID: {{ cat.id }}</b></p>
+        <b>
+            <p class="name">
+                <a href="{{ url_for('main.cat', cat_id=cat.id) }}">{{ cat.name }}</a>
+            </p>
+        </b>
+        <p>Personality: {{ cat.personality }}</p>
+        <p>Appearance: {{ cat.appearance }}</p>
+        <p>Power level: {{ cat.power_level }}</p>
+            {% if owner %}
+                {% if method.value == 'legal adoption' %}
+                    <p>Owner: {{ owner.username }} (legal adoption)</p>
+                {% else %}
+                    <p>Owner: <span class="alert">{{ owner.username }} (STOLEN from previous owner)</span></p>
+                {% endif %}
+                {% if (current_user.is_authenticated) and (owner.id != current_user.id) %}
+                <a class="alert" href="{{ url_for('main.adopt', cat_id=cat.id) }}">Steal!?</a>
+                {% endif %}
+            {% else %}
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.adopt', cat_id=cat.id) }}"><b>Adopt</b></a>
+                {% endif %}
+            {% endif %}
+        <!-- <hr>
+                       <form method="POST"
+                             action="{{ url_for('main.delete', cat_id=cat.id) }}">
+                           <input type="submit" value="Delete Cat"
+                                  onclick="return confirm('Are you sure you want to delete this entry?')"> -->
+        </form>
+    </div>
+</div>
+
+{% endfor %}
+</div>
+{% endblock %}
