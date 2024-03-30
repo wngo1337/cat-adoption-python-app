@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<span class="title">
+  <h1>{% block title %} You Stole {{ cat.name }}! {% endblock %}</h1>
+</span>
+
+<div class="content">
+  <div class="cat">
+    <img
+      src="{{ url_for('static', filename = ''+cat.image_path) }}"
+      alt="Image of {{ cat.name }}"
+    />
+    <p>{{ description }}</p>
+  </div>
+</div>
+{% endblock %}

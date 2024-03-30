@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 style="width: 100%">{% block title %} Edit {{ cat.name }}'s Details {% endblock %}</h1>
+    <form method="post">
+        <p>
+            <label for="id">Id</label>
+            <input type="number" name="id"
+                   placeholder="id">
+            </input>
+        </p>
+
+        <p>
+            <label for="name">Name</label>
+            <input type="text" name="name"
+                   placeholder="name">
+            </input>
+        </p>
+
+        <p>
+            <label for="personality">Personality</label>
+            <input type="text" name="personality"
+                   placeholder="personality">
+            </input>
+        </p>
+
+        <p>
+            <label for="appearance">Appearance</label>
+            <input type="text" name="appearance"
+                   placeholder="appearance">
+            </input>
+        </p>
+
+        <p>
+            <label for="power_level">Power Level</label>
+            <input type="number" name="power_level"
+                   placeholder="Power level">
+            </input>
+        </p>
+
+        <p>
+        <label for="description">Description</label>
+        <br>
+        <textarea name="description"
+                  placeholder="description"
+                  rows="15"
+                  cols="60"
+                  ></textarea>
+        </p>
+
+        <p>
+            <label for="image_path">Image Path</label>
+            <input type="text" name="image_path"
+                   placeholder="Power level">
+            </input>
+        </p>
+        <p>
+            <button type="submit">Submit</button>
+        </p>
+    </form>
+{% endblock %}

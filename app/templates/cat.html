@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block content %}
+<span class="title">
+  <h1>{% block title %} {{ cat.name }}{% endblock %}</h1>
+</span>
+<div class="content">
+  <div class="cat">
+    <img
+      src="{{ url_for('static', filename = ''+cat.image_path) }}"
+      alt="Image of {{ cat.name }}"
+    />
+    <p><b>ID: {{ cat.id }}</b></p>
+    <b>
+      <p class="name">
+        <a href="{{ url_for('main.cat', cat_id=cat.id) }}">{{ cat.name }}</a>
+      </p>
+    </b>
+    <p>Personality: {{ cat.personality }}</p>
+    <p>Appearance: {{ cat.appearance }}</p>
+    <p>Power level: {{ cat.power_level }}</p>
+    <p class="description">{{ cat_summary }}</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">Welcome, <span class="highlight">{{ name }}</span></h1>
+<div class="content">
+  <h2>Your Cats</h2>
+  {% for cat, adoption, formatted_date in owned_cats %}
+  <div class="cat">
+    <img
+      src="{{ url_for('static', filename = ''+cat.image_path)}}"
+      alt="Image of cat"
+    />
+    <strong>
+      <p class="name">
+        <a href="{{ url_for('main.cat', cat_id=cat.id) }}">{{ cat.name }}</a>
+      </p>
+    </strong>
+    <p>Date of adoption: {{ formatted_date }}</p>
+    {% if adoption.method.value == 'legal adoption' %}
+        <p>Acquisition method: legal adoption</span></p>
+    {% else %}
+        <p>Acquisition method: <span class="alert">STOLEN</span></p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
