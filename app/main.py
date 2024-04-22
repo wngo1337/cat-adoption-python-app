@@ -77,14 +77,15 @@ def adopt_post(cat_id):
     db.session.add(adoption_record)
     db.session.commit()
 
-    cat_to_update = Cat.query.filter_by(id=cat_id).first()
-    cat_to_update.latest_adoption_id = int(adoption_record.id)
+    # issue here? Possible that filter_by is fetching the wrong cat?
+    cat_to_update = Cat.query.get_or_404(cat_id)
+    cat_to_update.latest_adoption_id = adoption_record.id
+    db.session.commit()
 
     prompt = DescriptionGenerator.create_formatted_prompt(DescriptionGenerator.DescriptionType.CAT_ADOPT, [current_user.username, cat_to_update.name, cat_to_update.personality, cat_to_update.appearance])
 
     description = DescriptionGenerator.generate_response(prompt)
 
-    db.session.commit()
     return render_template('successful_adopt.html', cat=cat_to_update, adopter=current_user.username, description=description)
 
 @main.route('/steal/<int:cat_id>/', methods=['POST'])
@@ -92,7 +93,7 @@ def adopt_post(cat_id):
 def steal_post(cat_id):
     steal_cat = Cat.query.get_or_404(cat_id)
     previous_adoption_record = Adoption.query.get_or_404(steal_cat.latest_adoption_id)
-    previous_owner = User.query.get_or_404(previous_adoption_record.previous_owner_id)
+    previous_owner = User.query.get_or_404(previous_adoption_record.user_id)
     adoption_record = Adoption(
         user_id=current_user.id,
         previous_owner_id=previous_owner.id,
