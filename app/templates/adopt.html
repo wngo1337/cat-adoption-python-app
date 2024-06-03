@@ -1,43 +1,47 @@
-{% extends 'base.html' %} {% block content %}
-<span class="title">
-  <h1>
-    {% block title %} {% if last_owner %} Steal {{ cat.name }} {% else %} Adopt
-    {{ cat.name }} {% endif %} {% endblock %}
-  </h1>
-</span>
-
-<div class="content">
-  <div class="cat">
-    <img
-      src="{{ url_for('static', filename = ''+cat.image_path) }}"
-      alt="Image of {{ cat.name }}"
-    />
-    <p>{{ description }}</p>
-    {% if last_adoption %} {% if last_owner.username == current_user.username %}
-    <div>{{ cat.name }} is already owned by you!</div>
-    {% else %}
-    <div>{{ cat.name }} is already owned by {{ last_owner.username }}.</div>
-    <div>
-      <p>You wouldn't adopt someone else's cat, right?</p>
-      <form
-        action="{{ url_for('main.steal_post', cat_id=cat.id) }}"
-        method="POST"
-      >
-        <input type="submit" name="submit_steal" value="Steal {{ cat.name }}" />
-      </form>
+{% extends 'base.html' %}
+{% block content %}
+    <span class="title">
+        <h1>
+            {% block title %}
+                {% if last_owner %}
+                    Steal {{ cat.name }}
+                {% else %}
+                    Adopt
+                    {{ cat.name }}
+                {% endif %}
+            {% endblock %}
+        </h1>
+    </span>
+    <div class="content">
+        <div class="cat">
+            <img src="{{ url_for('static', filename = ''+cat.image_path) }}"
+                 alt="Image of {{ cat.name }}" />
+            <div class="background-wrapper">
+                <p class="description">{{ description }}</p>
+            </div>
+            {% if last_adoption %}
+                {% if last_owner.username == current_user.username %}
+                    <div>{{ cat.name }} is already owned by you!</div>
+                {% else %}
+                    <div>{{ cat.name }} is already owned by {{ last_owner.username }}.</div>
+                    <div>
+                        <p>You wouldn't adopt someone else's cat, right?</p>
+                        <form action="{{ url_for('main.steal_post', cat_id=cat.id) }}"
+                              method="POST">
+                            <input type="submit" name="submit_steal" value="Steal {{ cat.name }}" />
+                        </form>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div>{{ cat.name }} has no owner.</div>
+                <div>
+                    <p>Would you like to adopt {{ cat.name }}?</p>
+                    <form action="{{ url_for('main.adopt_post', cat_id=cat.id) }}"
+                          method="POST">
+                        <input type="submit" name="submit_adopt" value="Adopt {{ cat.name }}" />
+                    </form>
+                </div>
+            {% endif %}
+        </div>
     </div>
-    {% endif %} {% else %}
-    <div>{{ cat.name }} has no owner.</div>
-    <div>
-      <p>Would you like to adopt {{ cat.name }}?</p>
-      <form
-        action="{{ url_for('main.adopt_post', cat_id=cat.id) }}"
-        method="POST"
-      >
-        <input type="submit" name="submit_adopt" value="Adopt {{ cat.name }}" />
-      </form>
-    </div>
-    {% endif %}
-  </div>
-</div>
 {% endblock %}
