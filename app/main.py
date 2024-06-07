@@ -3,6 +3,7 @@ from datetime import timezone
 from flask import render_template, request, url_for, flash, redirect, Blueprint
 from flask_login import login_required, current_user
 from sqlalchemy import func, select
+from sqlalchemy.exc import NoResultFound
 from .models import Adoption, AdoptionMethod, Cat, User
 from . import db
 from .description_generator import DescriptionGenerator
@@ -49,7 +50,15 @@ def profile():
 @main.route("/cat/<int:cat_id>/")
 def cat(cat_id):
     cat = Cat.query.get_or_404(cat_id)
-    adoption_record = Adoption.query.get_or_404(cat.latest_adoption_id)
+    """
+    NOTE: latest_adoption_id will not be set yet if cat is not adopted
+    Does not cause error now, but gives SAWarning that it could if SQLAlchemy
+    changes how this case is handled in the future
+    """
+    try:
+        adoption_record = Adoption.query.get(cat.latest_adoption_id)
+    except NoResultFound:
+        adoption_record = None
     prompt = DescriptionGenerator.create_formatted_prompt(
         DescriptionGenerator.DescriptionType.CAT_SUMMARY,
         [cat.name, cat.personality, cat.appearance],
