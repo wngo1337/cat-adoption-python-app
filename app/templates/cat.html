@@ -24,7 +24,9 @@
                 <p class="description">{{ cat_summary }}</p>
             </div>
         </div>
-        {% if current_user.is_authenticated and current_user.id == adoption_record.user_id %}
+        {# Rely on short-circuiting to avoid exception when adoption_record
+        does not exist #}
+        {% if current_user.is_authenticated and adoption_record != None and current_user.id == adoption_record.user_id %}
             <form action={{ url_for('main.interact', cat_id=cat.id) }} method="POST">
                 <p>Want to ask {{ cat.name }} a question?</p>
                 <p>
