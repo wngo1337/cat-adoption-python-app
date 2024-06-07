@@ -1,23 +1,41 @@
-{% extends 'base.html' %} {% block content %}
-<span class="title">
-  <h1>{% block title %} {{ cat.name }}{% endblock %}</h1>
-</span>
-<div class="content">
-  <div class="cat">
-    <img
-      src="{{ url_for('static', filename = ''+cat.image_path) }}"
-      alt="Image of {{ cat.name }}"
-    />
-    <p><b>ID: {{ cat.id }}</b></p>
-    <b>
-      <p class="name">
-        <a href="{{ url_for('main.cat', cat_id=cat.id) }}">{{ cat.name }}</a>
-      </p>
-    </b>
-    <p>Personality: {{ cat.personality }}</p>
-    <p>Appearance: {{ cat.appearance }}</p>
-    <p>Power level: {{ cat.power_level }}</p>
-    <p class="description">{{ cat_summary }}</p>
-  </div>
+{% extends 'base.html' %}
+{% block content %}
+    <span class="title">
+        <h1>
+            {% block title %}{{ cat.name }}{% endblock %}
+        </h1>
+    </span>
+    <div class="content">
+        <div class="cat">
+            <img src="{{ url_for('static', filename = ''+cat.image_path) }}"
+                 alt="Image of {{ cat.name }}" />
+            <p>
+                <b>ID: {{ cat.id }}</b>
+            </p>
+            <b>
+                <p class="name">
+                    <a href="{{ url_for('main.cat', cat_id=cat.id) }}">{{ cat.name }}</a>
+                </p>
+            </b>
+            <p>Personality: {{ cat.personality }}</p>
+            <p>Appearance: {{ cat.appearance }}</p>
+            <p>Power level: {{ cat.power_level }}</p>
+            <div class="background-wrapper">
+                <p class="description">{{ cat_summary }}</p>
+            </div>
+        </div>
+        {% if current_user.is_authenticated and current_user.id == adoption_record.user_id %}
+            <form action={{ url_for('main.interact', cat_id=cat.id) }} method="POST">
+                <p>Want to ask {{ cat.name }} a question?</p>
+                <p>
+                    <label for="question"></label>
+                    <input type="text"
+                           name="question"
+                           placeholder="What do you want to ask {{ cat.name }}?">
+                </input>
+            </p>
+            <button type="submit">Ask</button>
+        </form>
+    {% endif %}
 </div>
 {% endblock %}

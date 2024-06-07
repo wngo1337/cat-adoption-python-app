@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <span class="title">
+        <h1>
+            {% block title %}You Ask {{ cat.name }}...{% endblock %}
+        </h1>
+    </span>
+    <div class="content">
+        <div class="cat">
+            <img src="{{ url_for('static', filename = ''+cat.image_path) }}"
+                 alt="Image of {{ cat.name }}" />
+            <b>
+                <p class="name">
+                    <a href="{{ url_for('main.cat', cat_id=cat.id) }}">{{ cat.name }}</a>
+                </p>
+            </b>
+            <p>
+                <strong>You ask {{ cat.name }}: {{ question }}</strong>
+            </p>
+            <div class="background-wrapper">
+                {% for line in cat_wisdom %}<p class="description">{{ line }}</p>{% endfor %}
+            </div>
+        </p>
+    </div>
+</form>
+</div>
+{% endblock %}
