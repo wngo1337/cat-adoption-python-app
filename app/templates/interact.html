@@ -2,7 +2,13 @@
 {% block content %}
     <span class="title">
         <h1>
-            {% block title %}You Ask {{ cat.name }}...{% endblock %}
+            {% block title %}
+                {% if is_new_conversation %}
+                    You Ask {{ cat.name }}...
+                {% else %}
+                    Your conversation with {{ cat.name }} continues...
+                {% endif %}
+            {% endblock %}
         </h1>
     </span>
     <div class="content">
@@ -15,13 +21,24 @@
                 </p>
             </b>
             <p>
-                <strong>You ask {{ cat.name }}: {{ question }}</strong>
+                <strong>You say to {{ cat.name }}: {{ question }}</strong>
             </p>
             <div class="background-wrapper">
                 {% for line in cat_wisdom %}<p class="description">{{ line }}</p>{% endfor %}
             </div>
         </p>
     </div>
+    <form action={{ url_for('main.interact', cat_id=cat.id) }} method="POST">
+        <p>Reply to {{ cat.name }}:</p>
+        <p>
+            <label for="question"></label>
+            <input type="text"
+                   name="question"
+                   placeholder="Say something else to {{ cat.name }}">
+        </input>
+    </p>
+    <input type="hidden" name="is-new-conversation" value="False">
+    <button type="submit">Ask</button>
 </form>
 </div>
 {% endblock %}
