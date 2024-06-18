@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 from datetime import timezone
-from flask import render_template, request, url_for, flash, redirect, Blueprint
+from flask import render_template, request, url_for, flash, redirect, Blueprint, session
 from flask_login import login_required, current_user
 from sqlalchemy import func, select
 from sqlalchemy.exc import NoResultFound
@@ -252,18 +252,52 @@ def delete(cat_id):
 
 @main.route("/cat/<int:cat_id>/interact", methods=["POST"])
 def interact(cat_id):
+    is_new_conversation_raw_val = request.form["is-new-conversation"]
+    is_new_conversation = (
+        True if is_new_conversation_raw_val.lower() == "true" else False
+    )
     user_input = request.form["question"]
     cat = Cat.query.get_or_404(cat_id)
-    prompt = DescriptionGenerator.create_formatted_prompt(
-        DescriptionGenerator.DescriptionType.CAT_WISDOM,
-        [user_input, cat.name, cat.personality, cat.appearance],
+    user_cat_session_key = f"{current_user.id}_{cat.name}_context"
+
+    if is_new_conversation:
+        # Conversations should start from scratch each time to keep things
+        # interesting
+        # Plus, it helps us to save on the limited storage space on our VM 🤣
+        session.pop(user_cat_session_key, None)
+        prompt = DescriptionGenerator.create_formatted_prompt(
+            DescriptionGenerator.DescriptionType.CAT_WISDOM,
+            [cat.name, cat.personality, cat.appearance],
+        )
+        context = [{"role": "user", "parts": [prompt]}]
+
+    else:
+        # Retrieve stored chat history
+        user_cat_history = session[user_cat_session_key]
+        context = user_cat_history
+
+    response, new_context = DescriptionGenerator.generate_response_from_history(
+        context, user_input
     )
-    cat_wisdom = DescriptionGenerator.generate_response(prompt)
+
+    # Store updated chat context in session for accessability from jinja call
+    # template call
+    session[user_cat_session_key] = new_context
+
     # Assumes that Gemini correctly generates output with specified tags 🥲
-    line_break_tag = r"ENDLINE"
-    formatted_cat_wisdom = cat_wisdom.split(line_break_tag)
+    # TODO: figure out how to get Gemini to consistently generate endline chars
+    # where I want them so I can split on them to reliably break into
+    # paragraphs
+    line_break_tag = r"NEWPARAGRAPH"
+    response_in_paragraphs = response.split(line_break_tag)
+
     return render_template(
-        "interact.html", cat=cat, cat_wisdom=formatted_cat_wisdom, question=user_input
+        "interact.html",
+        is_new_conversation=is_new_conversation,
+        cat=cat,
+        cat_wisdom=response_in_paragraphs,
+        question=user_input,
+        context=new_context,
     )
 
 

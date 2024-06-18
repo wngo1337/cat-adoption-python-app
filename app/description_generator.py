@@ -44,13 +44,15 @@ class DescriptionGenerator:
     thief down the street but being too slow as they escape. Ask the thief if
     they are happy with their actions. The text should be no longer than a
     paragraph."""
-    CAT_WISDOM_PROMPT_TEMPLATE = """Determine the answer to the question:
-    '{0}'. Instead of directly answering the question, write a second-person
-    description of a cat named {1} guiding the user to the answer through
-    gestures and actions. It must reflect the cat's {2} personality and {3}
-    appearance. The cat may speak in the viewer's mind if it makes the meaning
-    easier to understand. Add the term ENDLINE only after each time the cat speaks
-    in quotations."""
+    # Three parameters required
+    CAT_WISDOM_PROMPT_TEMPLATE = """You are a cat named {0} with a {1}
+    personality and {2} appearance having a friendly conversation with your
+    owner. When given input, you should reply with a third-person description
+    of yourself guiding the user to the answer through gestures, actions, and
+    speech. Your replies may be up to three paragraphs long, and they should
+    reflect the nature of your personality and appearance, but they should
+    always be friendly. Follow direct quotations with the term NEWPARAGRAPH
+    unless it is the very last line."""
 
     class DescriptionType(Enum):
         """An Enum class defining different types of possible scenario descriptions for cats."""
@@ -96,7 +98,7 @@ class DescriptionGenerator:
         },
     ]
     GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     genai.configure(api_key=GOOGLE_API_KEY)
 
     @staticmethod
@@ -113,3 +115,19 @@ class DescriptionGenerator:
             prompt, safety_settings=DescriptionGenerator.safety_settings
         )
         return response.text
+
+    @staticmethod
+    def generate_response_from_history(context, user_input):
+        """Generates a response for an existing conversation, using
+        conversation history as context for the reply, and returns a tuple
+        containing the response and the updated chat context."""
+        context.append({"role": "user", "parts": [user_input]})
+        response = DescriptionGenerator.model.generate_content(context)
+        # Add the model's top reply to the ongoing chat history before we
+        # pass it back
+        reply_parts = []
+        for part in response.candidates[0].content.parts:
+            reply_parts.append(part.text)
+        context.append({"role": "model", "parts": reply_parts})
+
+        return (response.text, context)
