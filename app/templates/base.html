@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>
-            {% block title %}{% endblock %}
-        - Cat Adoption Agency</title>
-        <style>
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      {% block title %}{% endblock %}
+    - Cat Adoption Agency</title>
+    <style>
       .title {
         margin: 5px;
       }
@@ -18,8 +18,46 @@
         flex-wrap: wrap;
       }
 
+      .cat-display {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .cat-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        border: 2px solid #006400;
+        padding-bottom: 15px;
+        margin: 5px;
+      }
+
+      .cat-container p, .cat-container a {
+        text-align: center;
+      }
+
+
+      .cat-display-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 200px;
+        height: 200px;
+      }
+
+      .cat-display-container img {
+        max-width: 150px;
+        max-height: 150px;
+      }
+
+      .cat-display-container figcaption {
+        text-align: center;
+      }
+
       body {
-        font-family: "Comic Sans MS", cursive;
+        font-family: "Comic Sans MS", "Garamond", cursive;
       }
 
       p {
@@ -89,14 +127,66 @@
         justify-content: center;
         align-items: center;
       }
+      
+      .regular-cat-outline {
+
+      }
+
+      .rare-cat-outline {
+
+      }
+
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-button {
+        color: #d64161;
+        font-size: 3em;
+        margin-left: 40px;
+        text-decoration: none;
+        border: none;
+        background-color: transparent;
+        outline: none;
+        font-family: "Comic Sans MS", "Garamond", cursive;
+      }
+
+      /*Generously "referenced" this from W3Schools XD*/
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: pink;
+        min-width: 100px;
+        box-shadow: 5px 16px 16px 8px rgba(0,0,0,0.4);
+        z-index: 1;
+      }
+
+      .dropdown-menu a {
+
+      }
+
+      .dropdown-menu a:hover {
+        background-color: salmon;
+      }
+
+      .dropdown:hover .dropdown-menu {
+        display: block;
+      }
+
 </style>
 </head>
 <body>
 <nav>
 <a href="{{ url_for("main.index") }}">Cat Adoption Agency</a>
+<div class="dropdown">
+<button class="dropdown-button">Site Navigation</button>
+<div class="dropdown-menu">
 <a href="{{ url_for("main.profile") }}">See My Cats</a>
 <a href="{{ url_for("main.leaderboard") }}">Leaderboards</a>
 <a href="{{ url_for("main.steal_log") }}">Steal Logs</a>
+</div>
+</div>
 <a href="{{ url_for("main.about") }}">About</a>
 {% if current_user.is_authenticated %}
 <a href="{{ url_for("authentication.logout") }}">Logout</a>
