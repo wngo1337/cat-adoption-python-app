@@ -1,12 +1,24 @@
 from datetime import datetime as dt
 from datetime import timezone
-from flask import render_template, request, url_for, flash, redirect, Blueprint, session
+from flask import (
+    render_template,
+    request,
+    url_for,
+    flash,
+    redirect,
+    Blueprint,
+    session,
+    current_app as app,
+)
 from flask_login import login_required, current_user
 from sqlalchemy import func, select
 from sqlalchemy.exc import NoResultFound
-from .models import Adoption, AdoptionMethod, Cat, User
-from . import db
+
+from .models import Adoption, AdoptionMethod, Cat, User, DisplayCat
+from .app_components import db
 from .description_generator import DescriptionGenerator
+from .jobs import update_display_after_adoption
+import random
 
 main = Blueprint("main", __name__)
 
@@ -15,8 +27,8 @@ main = Blueprint("main", __name__)
 def index():
     # Execute the query and fetch the results
     cat_info_query = (
-        db.session.query(Cat, User, Adoption.method)
-        .outerjoin(Adoption, Cat.latest_adoption_id == Adoption.id)
+        db.session.query(DisplayCat, User, Adoption.method)
+        .outerjoin(Adoption, DisplayCat.latest_adoption_id == Adoption.id)
         .outerjoin(User, User.id == Adoption.user_id)
         .all()
     )
@@ -124,6 +136,9 @@ def adopt_post(cat_id):
     cat_to_update = Cat.query.get_or_404(cat_id)
     cat_to_update.latest_adoption_id = adoption_record.id
     db.session.commit()
+
+    # update the index page cat display after successful adoption
+    update_display_after_adoption(cat_to_update)
 
     prompt = DescriptionGenerator.create_formatted_prompt(
         DescriptionGenerator.DescriptionType.CAT_ADOPT,

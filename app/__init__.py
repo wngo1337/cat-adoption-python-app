@@ -2,11 +2,16 @@ import os
 from flask import Flask, session
 from flask_session import Session
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
+
+# from flask_sqlalchemy import SQLAlchemy
+from .app_components import db, sess, task_scheduler
+
+from .jobs import update_display_cats
 import redis
 
-# init SQLAlchemy so we can use it later in our models
-db = SQLAlchemy()
+
+class Config:
+    SCHEDULER_API_ENABLED = True
 
 
 def create_app():
@@ -16,8 +21,18 @@ def create_app():
     app.config["SESSION_REDIS"] = redis.from_url("redis://localhost:6379")
 
     app.config.from_object(__name__)
-    sess = Session()
+    app.config.from_object(Config())
     sess.init_app(app)
+
+    task_scheduler.init_app(app)
+    task_scheduler.add_job(
+        id="random cat task",
+        func=update_display_cats,
+        trigger="interval",
+        seconds=60,
+        kwargs={"app": app},
+    )
+    task_scheduler.start()
 
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
