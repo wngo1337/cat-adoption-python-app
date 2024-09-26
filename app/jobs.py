@@ -27,6 +27,7 @@ def update_display_cats(app):
                 personality=cat.personality,
                 appearance=cat.appearance,
                 power_level=cat.power_level,
+                rarity=cat.rarity,
                 description=cat.description,
                 image_path=cat.image_path,
                 latest_adoption_id=cat.latest_adoption_id,

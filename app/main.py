@@ -206,6 +206,7 @@ def create():
         personality = request.form["personality"]
         appearance = request.form["appearance"]
         power_level = int(request.form["power_level"])
+        rarity = request.form["rarity"]
         description = request.form["description"]
         image_path = request.form["image_path"]
         new_cat = Cat(
@@ -214,6 +215,7 @@ def create():
             personality=personality,
             appearance=appearance,
             power_level=power_level,
+            rarity=rarity,
             description=description,
             image_path=image_path,
         )

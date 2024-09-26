@@ -7,12 +7,18 @@ from flask_login import UserMixin
 from .app_components import db
 
 
+class CatRarity(enum.Enum):
+    COMMON = "common"
+    RARE = "rare"
+
+
 class Cat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     personality = db.Column(db.String(255), nullable=False)
     appearance = db.Column(db.String(255), nullable=False)
     power_level = db.Column(db.Integer, nullable=False)
+    rarity = db.Column(Enum(CatRarity), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     image_path = db.Column(db.Text, nullable=False)
     latest_adoption_id = db.Column(db.Integer, db.ForeignKey("adoption.id"))
@@ -62,7 +68,7 @@ class DisplayCat(db.Model):
     personality = db.Column(db.String(255), nullable=False)
     appearance = db.Column(db.String(255), nullable=False)
     power_level = db.Column(db.Integer, nullable=False)
+    rarity = db.Column(Enum(CatRarity), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     image_path = db.Column(db.Text, nullable=False)
     latest_adoption_id = db.Column(db.Integer, db.ForeignKey("adoption.id"))
-
