@@ -1,7 +1,7 @@
 from flask import session
 from .app_components import db
 
-from .models import Cat, DisplayCat
+from .models import Cat, DisplayCat, CatRarity
 from flask import current_app as app
 from flask_apscheduler import APScheduler, scheduler
 import random
